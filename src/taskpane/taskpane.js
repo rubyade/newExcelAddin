@@ -32,48 +32,18 @@ export async function writeData() {
   });
 }
 
-export async function calculateData() {
-  // This is a global function that calls the workbook
+
 
 Excel.run(function (context) {
   var sheet = context.workbook.worksheets.getActiveWorksheet();
 
-  var data = [["=C3 * D3"], ["=C4 * D4"], ["=C5 * D5"], ["=SUM(E3:E5)"]];
+  var range = sheet.getRange("E3");
+  if (range.formulas == [["=D3 / 12"]]) {
+  sheet.getRange("F3:M3").copyFrom("E3", Excel.RangeCopyType.all, false, false);
+  }
+ 
 
-  var range = sheet.getRange("E3:E6");
-  range.formulas = data;
-  range.format.autofitColumns();
+  
 
   return context.sync();
-}).catch(errorHandlerFunction);
-  
-   // range.format.fill.color = "#4472C4";
-    // range.format.font.color = "white";
-    // range.format.autofitColumns();
-}
-
-// Excel.run(function (context) {
-//   var sheet = context.workbook.worksheets.getActiveWorksheet();
-//   var range = sheet.getRange("E3");
-//   range.formulas = [["=C3 * D3"]];
-//   range.format.autofitColumns();
-
-//   return context.sync();
-// }).catch(errorHandlerFunction);
-
-Excel.run(function (context) {
-  const sheet = context.workbook.worksheets.getActiveWorksheet();
-
-  const data = [["=C3 / 12"], ["=C4 / 12"]];
-
-  const range = sheet.getRange("E3:E4");
-  range.formulas = data;
-  range.format.autofitColumns();
-  
-
-  return context.sync().then(function () {
-    sheet.getRange("F3:M3").copyFrom(repeat, Excel.RangeCopyType.all, false, false);
-  })
-
-
 }).catch(errorHandlerFunction);
