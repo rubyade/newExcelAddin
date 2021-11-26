@@ -8,42 +8,51 @@
 Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
     // run code when page is ready
-    document.getElementById("btn").addEventListener("click", writeData);
+    document.getElementById("btn").addEventListener("click", calculateData);
   }
 });
 
 // the actual function that runs above when ready
-export async function writeData() {
+export async function calculateData() {
   // This is a global function that calls the workbook
-  Excel.run((context) => {
-    const ws = context.workbook.worksheets.getActiveWorksheet();
+  Excel.run(function (context) {
+    const sheet = context.workbook.worksheets.getActiveWorksheet();
 
-    const range = ws.getRange("A1:M2");
+    const range = sheet.getRange("E3");
+    range.formulas = [["=D3 / 12"]];
+    range.format.autofitColumns();
 
-    range.values = [
-      ["=A1*12", 78, 50, "My single Value", 78, 50, "My single Value", 78, 50, "My single Value", 78, 50, 24],
-      ["=A2*12", 78, 50, "My single Value", 78, 50, "My single Value", 78, 50, "My single Value", 78, 50, 24],
-    ];
+    sheet.getRange("F3:M3").copyFrom("E3", Excel.RangeCopyType.values, false, false);
 
     return context.sync();
-    // range.format.fill.color = "#4472C4";
-    // range.format.font.color = "white";
-    // range.format.autofitColumns();
-  });
+  })
 }
 
 
 
-Excel.run(function (context) {
-  var sheet = context.workbook.worksheets.getActiveWorksheet();
+  
+  Excel.run(function (context) {
 
-  var range = sheet.getRange("E3");
-  if (range.formulas == [["=D3 / 12"]]) {
-  sheet.getRange("F3:M3").copyFrom("E3", Excel.RangeCopyType.all, false, false);
-  }
- 
+    const clearRange = sheet.getRange("F3:M3");
 
+    const cell = sheet.getCell(2, 3);
+
+    if (cell === 0) {
+      clearRange.clear();
+    }
+
+    return context.sync();
+  })
+ // This is a global function that calls the workbook
+// Excel.run(function (context) {
+//   const sheet = context.workbook.worksheets.getActiveWorksheet();
+
+//   const range = sheet.getRange("E3");
+//   range.formulas = [["=D3 / 12"]];
+//   range.format.autofitColumns();
+
+//   sheet.getRange("F3:M3").copyFrom("E3", Excel.RangeCopyType.values, false, false);
   
 
-  return context.sync();
-}).catch(errorHandlerFunction);
+//   return context.sync();
+// }).catch(errorHandlerFunction);
